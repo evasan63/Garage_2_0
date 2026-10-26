@@ -13,4 +13,10 @@ New in Garage_2_0:
 - Check on vehicle type and registration number done directly when recieving user input
 - New methods added in Utilities IsValidVehicleType(), PrintWarningMessage() and PrintErrorMessage()
 
-- ....
+- Kort beskrivning av garaget
+• Hur programmet startas
+• Vilka klasser som finns och vad de ansvarar för
+• Kända begränsningar eller saker som respektive elev vill ha feedback
+på.
+
+

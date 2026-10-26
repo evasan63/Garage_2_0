@@ -84,6 +84,7 @@ namespace Garage_2_0
             decimal baseRate = 0.00m; // Base rate for the first hour
             //decimal hourlyRate = 15.00m; // Rate for each additional hour
 
+            // ser bra ut! 
             if (hoursParked <= 2)
             {
                 return baseRate;
