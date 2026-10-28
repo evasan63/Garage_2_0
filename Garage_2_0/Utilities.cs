@@ -15,9 +15,9 @@ namespace Garage_2_0
         public enum FuelType
         {
             NotUsed,
-            Petrol,
+            Bensin,
             Diesel,
-            Electric,
+            El,
             Hybrid
         }
 
@@ -107,6 +107,17 @@ namespace Garage_2_0
             Console.WriteLine("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
             Console.WriteLine($"{"Typ",-9} {"RegNummer",-10} {"Märke",-8} {"Bränsle",-10} {"Färg",-8} {"Säten",-6} {"Hjul",-6}");
             Console.WriteLine("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+        }
+
+        //***********************************************************************************
+        // This method prints a given successful message to the console
+        //***********************************************************************************
+        public static void PrintSuccessfulMessage(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
+            Console.WriteLine(msg);
+            Console.ResetColor();
         }
 
         //***********************************************************************************

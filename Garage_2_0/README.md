@@ -13,4 +13,15 @@ New in Garage_2_0:
 - Check on vehicle type and registration number done directly when recieving user input
 - New methods added in Utilities IsValidVehicleType(), PrintWarningMessage() and PrintErrorMessage()
 
-- ....
+- Code structure:
+  - class Program handles the user insteraction and creation of a garage
+  - class Garage handles the add and get vehicles in the garage, also list all vehicles or a specific vehicle
+	- the vehicles sub classes car, mc, bus, boat and airplane handles vehicle specifc data
+  - the Utilities provides common functions, like:
+	- IsValidVehicleType()
+	- IsValidRegistrationNumber()
+   
+2nd version:
+- New method PrintSuccessfulMessage() added in Utilities
+- Program and Garage classes updated to use the Utilities methods PrintSuccessful-/Warning-/Error-Message() for printouts
+- Minor fixes 

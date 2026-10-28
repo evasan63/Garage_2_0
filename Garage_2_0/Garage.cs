@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
+using static Garage_2_0.Utilities;
 
 namespace Garage_2_0
 {
@@ -118,44 +119,35 @@ namespace Garage_2_0
             {
                 Utilities.FuelType fuelType = (Utilities.FuelType)Enum.Parse(typeof(Utilities.FuelType), inputfuelType, true);
 
-                // Verify if a vehicle with same reg number alreay exists in the garage
-                for (int i = 0; i < CurrentVehicleCount; i++)
-                {
-                    if ( regNumber.Replace(" ", "").ToUpperInvariant() == vehicles[i].RegistrationNumber)
-                    {
-                        Console.WriteLine("Ett fordon med samma register nummer finns redan parkerad i garaget!");
-                        return;
-                    }
-                }
-
                 switch (vehicleType.ToLower())
                 {
                     case "bil":  // Implementation for parking a car in the garage
                         if (CurrentOccupiedSpots < totalNumberOfParkingLots)
                         {
-                             if (NumberOfElectricParkingLots > CurrentOccupiedElectricSpots)
-                             {
-                                 CurrentOccupiedElectricSpots++;
-                             }
-                             else
-                             {
-                                 Console.WriteLine("Sorry, inga lediga laddplatser!");
-                                 return;
-                             }
+                            if (fuelType == FuelType.El || fuelType == FuelType.Hybrid)
+                            {
+                                if (NumberOfElectricParkingLots > CurrentOccupiedElectricSpots)
+                                {
+                                    CurrentOccupiedElectricSpots++;
+                                }
+                                else
+                                {
+                                    PrintWarningMessage("Sorry, inga lediga laddplatser!");
+                                    return;
+                                }
+                            }
 
                             Car car = new Car (regNumber, brand, fuelType, color, numOfSeats);
                             vehicles.Add(car);
 
-                            //Console.WriteLine();
-                            Console.WriteLine($"Bil med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
-                            Console.WriteLine();
+                            PrintSuccessfulMessage($"Bil med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
                             CurrentVehicleCount++;
                             CurrentOccupiedSpots++;
                         }
                         else
                         {
-                            Console.WriteLine("Sorry Garage is full, cannot add more cars!");
+                            PrintErrorMessage("Sorry Garage is full, cannot add more cars!");
                             return;
                         }
                         break;
@@ -166,16 +158,14 @@ namespace Garage_2_0
                             Motorcycle motorcycle = new Motorcycle ( regNumber, brand, fuelType, color);
                             vehicles.Add(motorcycle);
 
-                            //Console.WriteLine();
-                            Console.WriteLine($"Motorcycel med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
-                            Console.WriteLine();
+                            PrintSuccessfulMessage($"Motorcycel med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
                             CurrentVehicleCount++;
                             CurrentOccupiedSpots++;
                         }
                         else
                         {
-                            Console.WriteLine("Sorry Garage is full, cannot add more motorcycles!");
+                            PrintErrorMessage("Sorry Garage is full, cannot add more motorcycles!");
                             return;
                         }
                         break;
@@ -183,19 +173,17 @@ namespace Garage_2_0
                     case "buss":  // Implementation for parking a bus in the garage
                         if (CurrentOccupiedSpots < totalNumberOfParkingLots - 2)
                         {
-                            Bus bus = new Bus ( regNumber, brand, fuelType, color, numOfWheels, numOfSeats);
+                            Bus bus = new Bus ( regNumber, brand, fuelType, color, numOfSeats, numOfWheels);
                             vehicles.Add(bus);
 
-                            //Console.WriteLine();
-                            Console.WriteLine($"Buss med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
-                            Console.WriteLine();
+                            PrintSuccessfulMessage($"Buss med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
                             CurrentVehicleCount++;
                             CurrentOccupiedSpots = CurrentOccupiedSpots + 2;
                         }
                         else
                         {
-                            Console.WriteLine("Sorry Garage is full, cannot add more buses.");
+                            PrintErrorMessage("Sorry Garage is full, cannot add more buses.");
                             return;
                         }
                         break;
@@ -206,16 +194,14 @@ namespace Garage_2_0
                             Boat boat = new Boat(regNumber, brand, fuelType, color, numOfSeats);
                             vehicles.Add(boat);
 
-                            //Console.WriteLine();
-                            Console.WriteLine($"Båt med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
-                            Console.WriteLine();
+                            PrintSuccessfulMessage($"Båt med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
                             CurrentVehicleCount++;
                             CurrentOccupiedSpots = CurrentOccupiedSpots + 2; ;
                         }
                         else
                         {
-                            Console.WriteLine("Sorry Garage is full, cannot add more boats!");
+                            PrintErrorMessage("Sorry Garage is full, cannot add more boats!");
                             return;
                         }
                         break;
@@ -225,28 +211,26 @@ namespace Garage_2_0
                             Airplane airplane = new Airplane(regNumber, brand, fuelType, color, numOfSeats);
                             vehicles.Add(airplane);
 
-                            //Console.WriteLine();
-                            Console.WriteLine($"Flygplan med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
-                            Console.WriteLine();
+                            PrintSuccessfulMessage($"Flygplan med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
                             CurrentVehicleCount++;
                             CurrentOccupiedSpots = CurrentOccupiedSpots + 3;
                         }
                         else
                         {
-                            Console.WriteLine("Sorry, Garage is full, not enough space for an airplanes!");
+                            PrintErrorMessage("Sorry, Garage is full, not enough space for an airplanes!");
                             return;
                         }
                         break;
 
                     default:
-                        Console.WriteLine("Invalid vehicle type. Please enter a valid vehicle type.");
+                        PrintErrorMessage("Invalid vehicle type. Please enter a valid vehicle type.");
                         return;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error while parking a vehicle: {ex.Message}");
+                PrintErrorMessage($"Error while parking a vehicle: {ex.Message}");
                 return;
             }    
         }
@@ -262,7 +246,7 @@ namespace Garage_2_0
             {
                 if (CurrentVehicleCount == 0)
                 {
-                    Console.WriteLine("Garage is empty. No vehicles to retrieve.");
+                    PrintWarningMessage("Garage is empty. No vehicles to retrieve.");
                     return;
                 }
                 for (int i = 0; i < CurrentVehicleCount; i++)
@@ -273,9 +257,8 @@ namespace Garage_2_0
                         Random random = new Random();
                         int hoursParked = random.Next(1, 24);
 
-                        Console.WriteLine();
-                        Console.WriteLine($"Fordon med registrerings nummer {vehicles[i].RegistrationNumber} hämtad!");
-                        Console.WriteLine($"Kvitto: {vehicles[i].RegistrationNumber} parkerad {hoursParked} timmar, " +
+                        PrintSuccessfulMessage($"Fordon med registrerings nummer {vehicles[i].RegistrationNumber} hämtad!");
+                        PrintSuccessfulMessage($"Kvitto: {vehicles[i].RegistrationNumber} parkerad {hoursParked} timmar, " +
                             $"avgift {Utilities.CalculateParkingFee(hoursParked, pricePerHour)} kr!");
 
                         // Shift the remaining vehicles to fill the gap
@@ -288,12 +271,12 @@ namespace Garage_2_0
                         return;
                     }
                 }
-                Console.WriteLine($"No vehicle found with registration number: {regNumber}");
+                PrintErrorMessage($"No vehicle found with registration number: {regNumber}");
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error retrieving specifiedvehicle: {ex.Message}");
+                PrintErrorMessage($"Error retrieving specifiedvehicle: {ex.Message}");
             }
         }
 
@@ -306,12 +289,12 @@ namespace Garage_2_0
             {
                 if (vehicles == null || CurrentVehicleCount == 0)
                 {
-                    Console.WriteLine("No vehicles in the garage.");
+                    PrintWarningMessage("No vehicles in the garage.");
                     return;
                 }
                 else
                 {
-                    Utilities.PrintHeading();
+                    PrintHeading();
 
                     for (int i = 0; i < CurrentVehicleCount; i++)
                     {
@@ -323,7 +306,7 @@ namespace Garage_2_0
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error listing vehicles: {ex.Message}");
+                PrintErrorMessage($"Error listing vehicles: {ex.Message}");
             }   
         }
 
@@ -338,16 +321,17 @@ namespace Garage_2_0
             {
                 if (vehicles == null || vehicles.Count  == 0)
                 {
-                    Console.WriteLine("No vehicles in the garage.");
+                    PrintWarningMessage("No vehicles in the garage.");
                     return;
                 }
                 else if (CurrentVehicleCount == 0)
                 {
-                    Console.WriteLine("No vehicles in the garage.");
+                    PrintWarningMessage("No vehicles in the garage.");
                     return;
                 }
                 else
                 {
+                    Console.WriteLine("1:Här kan du lista fordon i garaget efter typ, märke, bränsleTyp eller färg, tryck enter   ");
                     Console.WriteLine("1:Lista fordon i garaget efter typ");
                     Console.WriteLine("2:Lista fordon i garaget efter märke");
                     Console.WriteLine("3:Lista fordon i garaget efter färg");
@@ -402,7 +386,7 @@ namespace Garage_2_0
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Fordons typen finns inte");
+                                    PrintWarningMessage($"Fordons typen finns inte");
                                 }
                             }
                             break;
@@ -438,7 +422,7 @@ namespace Garage_2_0
                             break;
 
                         default:
-                            Console.WriteLine("Ogiltigt val, försök igen!");
+                            PrintWarningMessage("Ogiltigt val, försök igen!");
                             break;
                     }
                     Console.WriteLine("-------------------------------------------------------------");
@@ -446,7 +430,7 @@ namespace Garage_2_0
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error listing vehicles: {ex.Message}");
+                PrintErrorMessage($"Error listing vehicles: {ex.Message}");
             }
         }
 

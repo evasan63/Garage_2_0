@@ -15,7 +15,6 @@ namespace Garage_2_0
         //***********************************************************************************
         static void Main(string[] args)
         {
-
             Garage garage = null;
             //List <Garage> garage = null;
             bool running = true;
@@ -23,7 +22,7 @@ namespace Garage_2_0
             while (running)
             {
                 Console.WriteLine();
-                Console.WriteLine("***     Välkommen till Evas Garage      **");
+                Console.WriteLine("***     Välkommen till Evas Garage 2.0     **");
                 Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
                 Console.WriteLine("1. Skapa ett nytt garage");
                 Console.WriteLine("2. Parkera ett fordon i garaget");
@@ -32,7 +31,7 @@ namespace Garage_2_0
                 Console.WriteLine("5. Lista specifika fordon i garaget");
                 Console.WriteLine("6. Parkera lista av fordon i garaget");
                 Console.WriteLine("0. Avsluta");
-                Console.Write("Välj alternativ: ");
+                Console.Write("Välj ett alternativ: ");
 
                 switch (Console.ReadLine()?.Trim())
                 {
@@ -40,12 +39,9 @@ namespace Garage_2_0
                         garage = CreateGarage();
                         if (garage != null)
                         {
-                            Console.WriteLine();
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Nytt garage med totalt {garage.TotalNumberOfParkingLots} platser, " +
+                            PrintSuccessfulMessage($"Nytt garage med totalt {garage.TotalNumberOfParkingLots} platser, " +
                                               $"varav {garage.NumberOfElectricParkingLots} laddplatser " +
                                               $"skapat!");
-                            Console.ResetColor();
 
                             ParkVehiclesFromFile(garage);
                         }
@@ -68,7 +64,7 @@ namespace Garage_2_0
                         ListSpecificVehicles(garage);
                         break;
 
-                    case "6": // Park many vehicles into the garage
+                    case "6": // Park list of vehicles into the garage
                         ParkVehiclesFromFile(garage);
                         break;
 
@@ -93,11 +89,10 @@ namespace Garage_2_0
             int numberOfElectricSpots = 0;
             int pricePerHour = 0;
 
-
             try
             {
                 Console.WriteLine("Hur många parkeringsplatser totalt ska garaget ha?");
-                if (!int.TryParse(Console.ReadLine(), out totalNumberOfSpots))
+                if (!int.TryParse(Console.ReadLine(), out totalNumberOfSpots) || totalNumberOfSpots < 1)
                 {
                     throw new Exception("Ogiltigt antal parkeringsplatser");
                 }
@@ -127,10 +122,7 @@ namespace Garage_2_0
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine();
-                Console.WriteLine($"Error creating garage: {ex.Message}");
-                Console.ResetColor();
+                PrintErrorMessage($"Error creating garage: {ex.Message}");
 
                 return null;
             }
@@ -180,7 +172,9 @@ namespace Garage_2_0
                         return;
                     }
                 }
-                else if (garage.IsVehicleWithRegNumInGarage(regNumber))
+
+                // Check if registration number already parked in the garage
+                if (garage.IsVehicleWithRegNumInGarage(regNumber))
                 {
                     PrintErrorMessage("Bil med samma reg nummer finns redan i garaget!");
                 }
@@ -189,11 +183,11 @@ namespace Garage_2_0
                 Console.WriteLine("Ange vilken tillverkare (Audi, BMW, Cupra, Ford, Volvo, etc.):");
                 string brand = Console.ReadLine();
 
-                // Promt user for fule type
+                // Ask for fuel type
                 Console.WriteLine("Ange type av bränsle (1:Petrol, 2:Diesel, 3:Electric, 4:Hybrid):");
                 string fuelType = Console.ReadLine();
 
-                // Promt user for vehichle color
+                // Ask for vehichle color
                 Console.WriteLine("Ange färg på fordonet:");
                 string color = Console.ReadLine();
 
@@ -213,7 +207,7 @@ namespace Garage_2_0
                     Console.WriteLine("Ange antal hjul på fordonet:");
                     int numOfWheels = int.Parse(Console.ReadLine());
 
-                    garage.AddVehicle(vehicleType, regNumber, brand, fuelType, color, numOfSeats, numOfWheels );
+                    garage.AddVehicle(vehicleType, regNumber, brand, fuelType, color, numOfSeats, numOfWheels);
                 }
                 else
                 {
@@ -222,19 +216,19 @@ namespace Garage_2_0
             }
             catch (IOException ex)
             {
-                Console.WriteLine($"IO error while getting vehicle: {ex.Message}");
+                PrintErrorMessage($"IO error while getting vehicle: {ex.Message}");
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"Format error while getting vehicle: {ex.Message}");
+                PrintErrorMessage($"Format error while getting vehicle: {ex.Message}");
             }
             catch (FormatException ex)
             {
-                Console.WriteLine($"Format error while getting vehicle: {ex.Message}");
+                PrintErrorMessage($"Format error while getting vehicle: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting vehicle: {ex.Message}");
+                PrintErrorMessage($"Error getting vehicle: {ex.Message}");
             }
         }
 
@@ -257,7 +251,7 @@ namespace Garage_2_0
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting vehicle: {ex.Message}");
+                PrintErrorMessage($"Error getting vehicle: {ex.Message}");
             }
         }
 
@@ -278,12 +272,12 @@ namespace Garage_2_0
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting vehicle: {ex.Message}");
+                PrintErrorMessage($"Error getting vehicle: {ex.Message}");
             }
         }
 
         //**************************************************************
-        // List spcific vehicles parked in the garage
+        // List specific vehicles parked in the garage
         //**************************************************************
         static public void ListSpecificVehicles(Garage garage)
         {
@@ -309,55 +303,85 @@ namespace Garage_2_0
             int antal;
             string fordon;
 
-            Console.WriteLine("Vill du parkera ett antal fordon direkt, ange antal (0 - 20):");
-            int.TryParse(Console.ReadLine(), out antal);
-
-            //string[] allaFordon = File.ReadAllLines(@"C:\Users\evasa\source\repos\Garage_2_0\Garage_2_0\fordon.txt");
-            if (antal > 0 && antal < 20)
+            try
             {
-                using (StreamReader reader = new StreamReader(@"C:\Users\evasa\source\repos\Garage_2_0\Garage_2_0\fordon.txt"))
+                Console.WriteLine("Vill du parkera ett antal fordon direkt, ange antal (0 - 20):");
+                if (!int.TryParse(Console.ReadLine(), out antal) || antal < 0)
                 {
-                    for (int i = 0; i <= antal; i++)
+                    throw new Exception("Ogiltigt antal fordon");
+                }
+
+                //string[] allaFordon = File.ReadAllLines(@"C:\Users\evasa\source\repos\Garage_2_0\Garage_2_0\fordon.txt");
+                if (antal > 0 && antal < 20)
+                {
+                    using (StreamReader reader = new StreamReader(@"C:\Users\evasa\source\repos\Garage_2_0\Garage_2_0\fordon.txt"))
                     {
-                        fordon = reader.ReadLine();
-
-                        if (fordon == null)
-                            break;
-
-                        var cmdArgs = fordon.Split();
-
-
-                        if (cmdArgs.Length > 4 && cmdArgs.Length < 8)
+                        for (int i = 0; i < antal; i++)
                         {
-                            switch (cmdArgs[0])
+                            fordon = reader.ReadLine();
+
+                            if (fordon == null)
+                                break;
+
+                            var cmdArgs = fordon.Split();
+
+                            // Check if registration number already parked in the garage
+                            if (garage.IsVehicleWithRegNumInGarage(cmdArgs[1]))
                             {
-                                case "bil":
-                                    garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]));
-                                    break;
+                                PrintErrorMessage("Bil med samma reg nummer finns redan i garaget!");
+                            }
+                            else
+                            { 
+                            if (cmdArgs.Length > 4 && cmdArgs.Length < 8)
+                            {
+                                switch (cmdArgs[0])
+                                {
+                                    case "bil":
+                                        garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]));
+                                        break;
 
-                                case "mc":
-                                    garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4]);
-                                    break;
+                                    case "mc":
+                                        garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4]);
+                                        break;
 
-                                case "buss":
-                                    garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]), int.Parse(cmdArgs[6]));
-                                    break;
+                                    case "buss":
+                                        garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]), int.Parse(cmdArgs[6]));
+                                        break;
 
-                                case "båt":
-                                    garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]));
-                                    break;
+                                    case "båt":
+                                        garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]));
+                                        break;
 
-                                case "flygplan":
-                                    garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]));
-                                    break;
+                                    case "flygplan":
+                                        garage.AddVehicle(cmdArgs[0], cmdArgs[1], cmdArgs[2], cmdArgs[3], cmdArgs[4], int.Parse(cmdArgs[5]));
+                                        break;
 
-                                default:
-                                    Console.WriteLine("Okänd fordons type!");
-                                    break;
+                                    default:
+                                        PrintWarningMessage("Okänd fordons type!");
+                                        break;
+                                }
                             }
                         }
+                        }
                     }
+
                 }
+            }
+            catch (IOException ex)
+            {
+                PrintErrorMessage($"IO error while parking vehicles: {ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                PrintErrorMessage($"Format error while parking vehicles: {ex.Message}");
+            }
+            catch (FormatException ex)
+            {
+                 PrintErrorMessage($"Format error while parking vehicles: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                PrintErrorMessage($"Exception error while parking vehicles: {ex.Message}");
             }
         }
     }

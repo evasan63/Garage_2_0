@@ -43,7 +43,7 @@ namespace Garage_2_0
         //**********************************************************    
         public override string ToString()
         {
-            return $"{"Båt",-9} {RegistrationNumber,-10} {FuelType,-10} {Brand,-8} {Color,-8} {NumberOfSeats,-6} {NumberOfWheels,-6}";
+            return $"{"Båt",-9} {RegistrationNumber,-10} {Brand,-8} {FuelType,-10} {Color,-8} {NumberOfSeats,-6} {NumberOfWheels,-6}";
         }
     }
 }
