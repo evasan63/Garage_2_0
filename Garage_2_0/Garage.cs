@@ -137,8 +137,7 @@ namespace Garage_2_0
                                 }
                             }
 
-                            Car car = new Car (regNumber, brand, fuelType, color, numOfSeats);
-                            vehicles.Add(car);
+                            vehicles.Add(new Car(regNumber, brand, fuelType, color, numOfSeats));
 
                             PrintSuccessfulMessage($"Bil med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
@@ -155,8 +154,7 @@ namespace Garage_2_0
                     case "mc":  // Implementation for parking a motorcycle in the garage
                         if (CurrentOccupiedSpots < totalNumberOfParkingLots)
                         {
-                            Motorcycle motorcycle = new Motorcycle ( regNumber, brand, fuelType, color);
-                            vehicles.Add(motorcycle);
+                            vehicles.Add(new Motorcycle(regNumber, brand, fuelType, color));
 
                             PrintSuccessfulMessage($"Motorcycel med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
@@ -173,8 +171,7 @@ namespace Garage_2_0
                     case "buss":  // Implementation for parking a bus in the garage
                         if (CurrentOccupiedSpots < totalNumberOfParkingLots - 2)
                         {
-                            Bus bus = new Bus ( regNumber, brand, fuelType, color, numOfSeats, numOfWheels);
-                            vehicles.Add(bus);
+                            vehicles.Add(new Bus(regNumber, brand, fuelType, color, numOfSeats, numOfWheels));
 
                             PrintSuccessfulMessage($"Buss med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
@@ -191,8 +188,7 @@ namespace Garage_2_0
                     case "båt":  // Implementation for parking a boat in the garage  
                         if (CurrentOccupiedSpots < totalNumberOfParkingLots - 2)
                         {
-                            Boat boat = new Boat(regNumber, brand, fuelType, color, numOfSeats);
-                            vehicles.Add(boat);
+                            vehicles.Add(new Boat(regNumber, brand, fuelType, color, numOfSeats));
 
                             PrintSuccessfulMessage($"Båt med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
@@ -208,8 +204,7 @@ namespace Garage_2_0
                     case "flygplan":  // Implementation for parking an airplane in the garage
                         if (CurrentOccupiedSpots < totalNumberOfParkingLots - 3)
                         {
-                            Airplane airplane = new Airplane(regNumber, brand, fuelType, color, numOfSeats);
-                            vehicles.Add(airplane);
+                            vehicles.Add(new Airplane(regNumber, brand, fuelType, color, numOfSeats));
 
                             PrintSuccessfulMessage($"Flygplan med registrerings nummer {vehicles[CurrentVehicleCount].RegistrationNumber} parkerad!");
 
@@ -239,7 +234,7 @@ namespace Garage_2_0
         // This method is used to retrieve a vehicle from the garage. It takes a string parameter
         // representing the registration number of the vehicle to be retrieved.
         //*******************************************************************************************
-        public void GetVehicle(string regNumber)
+        public bool GetVehicle(string regNumber)
         {
             // Implementation for retrieving a vehicle
             try
@@ -247,7 +242,7 @@ namespace Garage_2_0
                 if (CurrentVehicleCount == 0)
                 {
                     PrintWarningMessage("Garage is empty. No vehicles to retrieve.");
-                    return;
+                    return false;
                 }
                 for (int i = 0; i < CurrentVehicleCount; i++)
                 {
@@ -268,15 +263,16 @@ namespace Garage_2_0
                         }
                         vehicles[CurrentVehicleCount - 1] = null; // Clear the last spot
                         CurrentVehicleCount--;
-                        return;
+                        return true;
                     }
                 }
                 PrintErrorMessage($"No vehicle found with registration number: {regNumber}");
-
+                return false;
             }
             catch (Exception ex)
             {
                 PrintErrorMessage($"Error retrieving specifiedvehicle: {ex.Message}");
+                return false;
             }
         }
 
@@ -453,6 +449,5 @@ namespace Garage_2_0
             return IsFound;
         }
     }
-
 }
 

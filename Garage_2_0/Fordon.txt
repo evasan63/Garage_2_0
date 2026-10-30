@@ -4,7 +4,7 @@ bil lgh257 Golf 2 vit 5
 bil sju28b BMW 2 vit 2
 mc kau38b Honda 1 vit 
 båt trf48b Sand 2 vit 4
-buss sdf678 Volvo 2 röd 50 8
+buss skf678 Volvo 2 röd 50 8
 mc hab678 Kawa 1 grön 
 flygplan fgr356 Boing 1 vit 250
 buss sdf678 Volvo 2 röd 50 8

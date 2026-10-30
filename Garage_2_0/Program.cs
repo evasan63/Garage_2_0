@@ -312,7 +312,7 @@ namespace Garage_2_0
                 }
 
                 //string[] allaFordon = File.ReadAllLines(@"C:\Users\evasa\source\repos\Garage_2_0\Garage_2_0\fordon.txt");
-                if (antal > 0 && antal < 20)
+                if (antal > 0 && antal <= 20)
                 {
                     using (StreamReader reader = new StreamReader(@"C:\Users\evasa\source\repos\Garage_2_0\Garage_2_0\fordon.txt"))
                     {
